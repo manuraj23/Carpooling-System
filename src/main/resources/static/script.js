@@ -83,3 +83,83 @@ function logout() {
     localStorage.clear();
     window.location.href = "index.html";
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Script loaded successfully");
+
+    // Attach event listener to Create Ride button
+    document.getElementById("createRideBtn").addEventListener("click", function () {
+        console.log("Create Ride button clicked");
+        openRideForm();
+    });
+});
+
+// Function to open the ride creation pop-up
+function openRideForm() {
+    console.log("Opening ride form");
+    document.getElementById("rideFormPopup").style.display = "block";
+}
+
+// Function to close the ride creation pop-up
+function closeRideForm() {
+    document.getElementById("rideFormPopup").style.display = "none";
+}
+
+// Function to submit ride details to the backend
+function submitRide() {
+    console.log("Submit button clicked");
+
+    const ride = {
+        startDestination: document.getElementById("startDestination").value,
+        endDestination: document.getElementById("endDestination").value,
+        dateOfStart: document.getElementById("dateOfStart").value,
+        timeOfStart: document.getElementById("timeOfStart").value,
+        fare: document.getElementById("fare").value,
+        seatsAvailable: document.getElementById("seatsAvailable").value
+    };
+
+    console.log("Ride Data:", ride);
+
+    // Send ride data to backend
+    fetch("http://localhost:8080/api/rides", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(ride)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Ride created successfully:", data);
+            closeRideForm();
+            fetchRides(); // Refresh the ride list
+        })
+        .catch(error => console.error("Error submitting ride:", error));
+}
+
+// Function to fetch and display rides created by the driver
+function fetchRides() {
+    fetch("http://localhost:8080/api/rides")
+        .then(response => response.json())
+        .then(data => {
+            console.log("Fetched Rides:", data);
+
+            let rideList = document.getElementById("rideList");
+            rideList.innerHTML = ""; // Clear previous rides
+
+            data.forEach(ride => {
+                let rideItem = document.createElement("div");
+                rideItem.classList.add("ride-item");
+                rideItem.innerHTML = `
+                    <p><strong>From:</strong> ${ride.startDestination} - <strong>To:</strong> ${ride.endDestination}</p>
+                    <p><strong>Date:</strong> ${ride.dateOfStart} | <strong>Time:</strong> ${ride.timeOfStart}</p>
+                    <p><strong>Fare:</strong> ₹${ride.fare} | <strong>Seats Available:</strong> ${ride.seatsAvailable}</p>
+                `;
+                rideList.appendChild(rideItem);
+            });
+        })
+        .catch(error => console.error("Error fetching rides:", error));
+}
+
+// Load rides when the page loads
+document.addEventListener("DOMContentLoaded", fetchRides);
