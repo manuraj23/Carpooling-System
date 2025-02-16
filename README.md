@@ -109,14 +109,4 @@ To ensure safety, the system protects user data with **anonymization features**.
 
 ---
 
-## ⚙️ Installation & Setup
 
-### Prerequisites:
-- Install **Node.js**, **MongoDB/MySQL**, and **npm/yarn**.
-- Set up an API key for **Google Maps API**.
-
-### Steps:
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-repo/carpooling-system.git
-   cd carpooling-system
